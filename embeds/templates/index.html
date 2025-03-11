@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enviar Embeds a Discord</title>
+    <style>
+        body {
+            font-family: 'Whitney', 'Helvetica Neue', Arial, sans-serif;
+            background-color: #2f3136;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            position: relative; /* Esto es necesario para posicionar los botones relativos al body */
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        form {
+            background-color: #36393f;
+            border-radius: 8px;
+            padding: 20px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        label {
+            font-size: 14px;
+            color: #b9bbbe;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input[type="text"], input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 16px;
+            background-color: #40444b;
+            border: 1px solid #72767d;
+            border-radius: 5px;
+            color: white;
+            font-size: 14px;
+        }
+
+        input[type="text"]:focus, input[type="file"]:focus {
+            border-color: #7289da;
+            outline: none;
+        }
+
+        button {
+            background-color: #7289da;
+            border: none;
+            padding: 12px 20px;
+            color: white;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #5f73c5;
+        }
+
+        button:active {
+            background-color: #4b63a1;
+        }
+
+        .error, .success {
+            color: #f04747;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .success {
+            color: #43b581;
+        }
+
+        /* Estilo para el botón "Ir a Tickets" en la parte superior izquierda */
+        .go-to-tickets-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: #7289da;
+            padding: 10px 15px;
+            color: white;
+            font-size: 14px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .go-to-tickets-button:hover {
+            background-color: #5f73c5;
+        }
+
+        .go-to-tickets-button:active {
+            background-color: #4b63a1;
+        }
+
+        /* Estilo para el botón "Ir al editor" en la parte superior derecha */
+        .go-to-editor-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #7289da;
+            padding: 10px 15px;
+            color: white;
+            font-size: 14px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .go-to-editor-button:hover {
+            background-color: #5f73c5;
+        }
+
+        .go-to-editor-button:active {
+            background-color: #4b63a1;
+        }
+    </style>
+</head>
+<body>
+    <!-- Botón "Ir a Tickets" en la esquina superior izquierda -->
+    <a href="http://t4skor.ddns.net:5000" class="go-to-tickets-button">Ir a Tickets</a>
+
+    <!-- Botón "Ir al editor" en la esquina superior derecha -->
+    <a href="editor.html" class="go-to-editor-button">Ir al editor</a>
+
+    <div>
+        <h1>Enviar Embeds a Discord</h1>
+        <form action="/send_embed" method="post" enctype="multipart/form-data">
+            <label for="token">Token del Bot:</label>
+            <input type="text" id="token" name="token" required>
+
+            <label for="channel_id">ID del Canal:</label>
+            <input type="text" id="channel_id" name="channel_id" required>
+
+            <label for="json_file">Archivo JSON:</label>
+            <input type="file" id="json_file" name="json_file" accept=".json" required>
+
+            <button type="submit">Enviar</button>
+        </form>
+    </div>
+
+    <!-- Mostrar mensajes de éxito o error -->
+    {% if success %}
+        <div class="success">{{ success }}</div>
+    {% endif %}
+    {% if error %}
+        <div class="error">{{ error }}</div>
+    {% endif %}
+</body>
+</html>

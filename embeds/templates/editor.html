@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor de Embeds</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #36393f;
+            color: #ffffff;
+            position: relative;
+        }
+        .container {
+            background: #2f3136;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 600px;
+        }
+        .field {
+            margin-bottom: 15px;
+        }
+        .field label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #b9bbbe;
+        }
+        .field input, .field select, .field textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #72767d;
+            border-radius: 5px;
+            background-color: #202225;
+            color: #ffffff;
+            box-sizing: border-box;
+        }
+        .embed {
+            padding: 10px;
+            border: 1px solid #4f545c;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            background-color: #2f3136;
+        }
+        .preview {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #23272a;
+            border-radius: 5px;
+            border: 1px solid #4f545c;
+        }
+        .embed-preview {
+            background: #2f3136;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 5px solid;
+            margin-top: 10px;
+        }
+        .embed-title {
+            font-weight: bold;
+            font-size: 16px;
+            color: #ffffff;
+        }
+        .embed-description {
+            font-size: 14px;
+            color: #b9bbbe;
+            margin-top: 5px;
+        }
+        .embed-image {
+            margin-top: 10px;
+            max-width: 100%;
+            border-radius: 5px;
+        }
+        .embed-link {
+            display: block;
+            margin-top: 10px;
+            color: #5865f2;
+            text-decoration: none;
+        }
+        .embed-link:hover {
+            text-decoration: underline;
+        }
+        button {
+            background-color: #5865f2;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #4752c4;
+        }
+        .back-to-home {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Editor de Embeds</h1>
+        <div id="embeds"></div>
+        <button id="addEmbed">Añadir nuevo embed</button>
+        <button id="downloadJson" style="margin-top: 15px;">Descargar JSON</button>
+        <div id="embedPreview" class="preview"></div>
+    </div>
+    <button class="back-to-home" onclick="window.location.href='/';">Volver al inicio</button>
+
+    <script>
+        const embedsContainer = document.getElementById('embeds');
+        const embedPreview = document.getElementById('embedPreview');
+        const downloadJsonButton = document.getElementById('downloadJson');
+
+        let jsonData = {
+            version: 7,
+            backups: [{
+                name: "",
+                messages: [{
+                    data: {
+                        content: null,
+                        embeds: []
+                    },
+                    reference: ""
+                }]
+            }]
+        };
+
+        function renderEmbeds() {
+            embedsContainer.innerHTML = '';
+            jsonData.backups[0].messages[0].data.embeds.forEach((embed, index) => {
+                const embedDiv = document.createElement('div');
+                embedDiv.className = 'embed';
+                embedDiv.innerHTML = ` 
+                    <div class="field">
+                        <label>Título</label>
+                        <input type="text" value="${embed.title || ''}" onchange="updateEmbed(${index}, 'title', this.value)">
+                    </div>
+                    <div class="field">
+                        <label>Descripción</label>
+                        <textarea rows="3" onchange="updateEmbed(${index}, 'description', this.value)">${embed.description || ''}</textarea>
+                    </div>
+                    <div class="field">
+                        <label>Color</label>
+                        <input type="color" value="#${embed.color.toString(16).padStart(6, '0')}" onchange="updateEmbed(${index}, 'color', parseInt(this.value.substring(1), 16))">
+                    </div>
+                    <div class="field">
+                        <label>URL de Imagen</label>
+                        <input type="text" value="${embed.image?.url || ''}" onchange="updateEmbed(${index}, 'image.url', this.value)">
+                    </div>
+                    <div class="field">
+                        <label>URL del Link</label>
+                        <input type="text" value="${embed.url || ''}" onchange="updateEmbed(${index}, 'url', this.value)">
+                    </div>
+                    <div class="field">
+                        <label>Nombre del Link</label>
+                        <input type="text" value="${embed.urlName || ''}" onchange="updateEmbed(${index}, 'urlName', this.value)">
+                    </div>
+                `;
+                embedsContainer.appendChild(embedDiv);
+            });
+            renderPreview();
+        }
+
+        function renderPreview() {
+            embedPreview.innerHTML = '';
+            jsonData.backups[0].messages[0].data.embeds.forEach(embed => {
+                const embedDiv = document.createElement('div');
+                embedDiv.className = 'embed-preview';
+                embedDiv.style.borderColor = `#${embed.color.toString(16).padStart(6, '0')}`;
+                embedDiv.innerHTML = ` 
+                    <div class="embed-title">${embed.title || ''}</div>
+                    <div class="embed-description">${embed.description || ''}</div>
+                    ${embed.image?.url ? `<img src="${embed.image.url}" class="embed-image">` : ''}
+                    ${embed.url ? `<a href="${embed.url}" class="embed-link">${embed.urlName || 'Enlace'}</a>` : ''}
+                `;
+                embedPreview.appendChild(embedDiv);
+            });
+        }
+
+        function addEmbed() {
+            jsonData.backups[0].messages[0].data.embeds.push({
+                title: "",
+                description: "",
+                color: 16777215,
+                image: { url: "" },
+                url: "",
+                urlName: ""
+            });
+            renderEmbeds();
+        }
+
+        function updateEmbed(index, key, value) {
+            if (key.includes('.')) {
+                const keys = key.split('.');
+                jsonData.backups[0].messages[0].data.embeds[index][keys[0]][keys[1]] = value;
+            } else {
+                jsonData.backups[0].messages[0].data.embeds[index][key] = value;
+            }
+            renderPreview();
+        }
+
+        function downloadJson() {
+            const jsonBlob = new Blob([JSON.stringify(jsonData, null, 2)], { type: 'application/json' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(jsonBlob);
+            link.download = 'embeds.json';
+            link.click();
+        }
+
+        document.getElementById('addEmbed').addEventListener('click', addEmbed);
+        downloadJsonButton.addEventListener('click', downloadJson);
+
+        renderEmbeds();
+    </script>
+</body>
+</html>

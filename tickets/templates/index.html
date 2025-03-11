@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración del Bot</title>
+    <style>
+        body {
+            font-family: "Whitney", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            background-color: #36393F;
+            color: #dcddde;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            text-align: center;
+            color: #ffffff;
+            margin-top: 20px;
+        }
+
+        .top-left-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: #7289da;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .top-left-button:hover {
+            background-color: #5e74c4;
+        }
+
+        form {
+            width: 50%;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #2f3136;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #b9bbbe;
+        }
+
+        input[type="text"], input[type="number"], textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #444b53;
+            border-radius: 5px;
+            background-color: #2f3136;
+            color: #dcddde;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        input[type="text"]:focus, input[type="number"]:focus, textarea:focus {
+            border-color: #7289da;
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #7289da;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #5e74c4;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        #add-option-btn {
+            width: auto;
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #7289da;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        #add-option-btn:hover {
+            background-color: #5e74c4;
+        }
+
+        .dropdown-option {
+            margin-bottom: 20px;
+        }
+
+        .dropdown-option label {
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <a href="http://t4skor.ddns.net:81" class="top-left-button">Ir a embeds</a>
+
+    <h1>Configuración del Bot de Discord</h1>
+    <form action="/submit_config" method="POST">
+        <label for="token">Token del Bot:</label>
+        <input type="text" id="token" name="token" required>
+        
+        <label for="channel_id">ID del Canal:</label>
+        <input type="number" id="channel_id" name="channel_id" required>
+        
+        <label for="ticket_message">Mensaje del Ticket:</label>
+        <textarea id="ticket_message" name="ticket_message" required></textarea>
+        
+        <label for="image_url">URL de la Imagen (opcional):</label>
+        <input type="text" id="image_url" name="image_url">
+        
+        <h3>Opciones del Desplegable</h3>
+        <div id="dropdown-options">
+            <div class="dropdown-option">
+                <label>Etiqueta:</label>
+                <input type="text" name="dropdown_labels[]" required>
+                
+                <label>Descripción:</label>
+                <input type="text" name="dropdown_descriptions[]" required>
+                
+                <label>Emoji:</label>
+                <input type="text" name="dropdown_emojis[]">
+            </div>
+        </div>
+        
+        <button type="button" id="add-option-btn">Añadir Opción</button>
+        <input type="submit" value="Guardar Configuración">
+    </form>
+
+    <script>
+        document.getElementById('add-option-btn').addEventListener('click', function() {
+            var container = document.getElementById('dropdown-options');
+            var newOption = document.createElement('div');
+            newOption.classList.add('dropdown-option');
+
+            newOption.innerHTML = `
+                <label>Etiqueta:</label>
+                <input type="text" name="dropdown_labels[]" required>
+                
+                <label>Descripción:</label>
+                <input type="text" name="dropdown_descriptions[]" required>
+                
+                <label>Emoji:</label>
+                <input type="text" name="dropdown_emojis[]">
+            `;
+
+            container.appendChild(newOption);
+        });
+    </script>
+</body>
+</html>
